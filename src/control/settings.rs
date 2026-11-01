@@ -490,7 +490,7 @@ const KEYS: &[Key] = &[
     ),
     optional(
         "ui_language",
-        Kind::Choice(&["en", "pl", "zh", "ja", "de", "es", "uk", "pt"]),
+        Kind::Choice(&["en", "pl", "zh", "ja", "de", "es", "uk", "pt", "fr"]),
         "Interface language; none follows the system",
     ),
     key(
@@ -1397,6 +1397,19 @@ mod tests {
     }
 
     #[test]
+    fn interface_language_choices_match_the_i18n_languages() {
+        let language = keys().find(|key| key.key == "ui_language").unwrap();
+        let Kind::Choice(choices) = language.kind else {
+            panic!("ui_language is not a choice");
+        };
+        let codes: Vec<&str> = crate::desktop::i18n::LANGUAGE_CHOICES
+            .iter()
+            .filter_map(|(code, _)| *code)
+            .collect();
+        assert_eq!(choices, codes.as_slice());
+    }
+
+    #[test]
     fn settings_read_by_key_and_prefix() {
         let settings = AppSettings::default();
         let all = list(&settings);
@@ -1479,6 +1492,8 @@ mod tests {
         assert_eq!(change.settings.meetings.calendar.lead_minutes, 5);
         let change = apply(&settings, "ui_language", "none", &rules()).unwrap();
         assert_eq!(change.settings.ui_language, None);
+        let change = apply(&settings, "ui_language", "fr", &rules()).unwrap();
+        assert_eq!(change.settings.ui_language.as_deref(), Some("fr"));
         let mut saved = settings.clone();
         saved.microphone = Some("USB Mic".into());
         let change = apply(&saved, "microphone", "system-default", &rules()).unwrap();

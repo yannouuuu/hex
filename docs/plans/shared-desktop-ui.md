@@ -52,5 +52,5 @@ wrote it).
 
 Every string the shared window shows goes through `desktop_i18n::tr`,
 `tr_fill`, or `tr_named`, with Polish, Chinese, Japanese, German, Spanish,
-and Ukrainian translations. A test fails if any translated string lacks a
-language.
+Ukrainian, Brazilian Portuguese, and French translations. A test fails if any
+translated string lacks a language.
